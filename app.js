@@ -54,7 +54,7 @@ bot.dialog('holidayCode', function(session){
 });
 
 bot.dialog('cancelHoliday', function(session){
-    session.endDialog("Your timesheet will need to be reverted please contact: the following: \n - Digital Services: digitalservicespmo@kainos.com \n - Smart: Jayne Carson j.carson@kainos.com \n - Everyone else - PMO@Kainos.com ");
+    session.endDialog("Your timesheet will need to be reverted please contact: the following: \n - Digital Services: digitalservicespmo@kainos.com \n - Smart: j.carson@kainos.com \n - Everyone else: PMO@Kainos.com ");
 
 }).triggerAction({
     matches: 'cancelHoliday'
