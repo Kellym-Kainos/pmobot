@@ -60,6 +60,42 @@ bot.dialog('cancelHoliday', function(session){
     matches: 'cancelHoliday'
 });
 
+bot.dialog('approvePrivileges', function(session){
+    session.endDialog("Your permissions will need to be upgraded, depending on your grade this may need approval from your manager.");
+
+}).triggerAction({
+    matches: 'approvePrivileges'
+});
+
+bot.dialog('buySellHoliday', function(session){
+    session.endDialog("Request approval from your manager for the amount of days you wish to buy/sell, forward the approval email to People Support.");
+
+}).triggerAction({
+    matches: 'buySellHoliday'
+});
+
+bot.dialog('mandatoryField', function(session){
+    session.endDialog("You have missed a mandatory field on your entry, please check these are all complete - the best way to view this is calendar view.");
+
+}).triggerAction({
+    matches: 'mandatoryField'
+});
+
+bot.dialog('dayInLieu', function(session){
+    session.endDialog(" Request approval for the day in lieu from your manager, forward the approval email to People Support");
+
+}).triggerAction({
+    matches: 'dayInLieu'
+});
+
+
+
+
+
+
+
+
+
 
 
 
