@@ -19,8 +19,19 @@ var bot = new builder.UniversalBot(connector, function (session) {
 });
 
 //LUIS setup
-var recognizer = new builder.LuisRecognizer("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/52441db0-8ba8-44df-9153-f6249d4062fe?subscription-key=5811ebd525b443b8badb31bb4e380aaa&timezoneOffset=0&verbose=true");
-bot.recognizer(recognizer);
+var luisRecognizer = new builder.LuisRecognizer("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/52441db0-8ba8-44df-9153-f6249d4062fe?subscription-key=5811ebd525b443b8badb31bb4e380aaa&timezoneOffset=0&verbose=true");
+bot.recognizer(luisRecognizer);
+
+const intents = new builder.IntentDialog({
+    recognizers: [
+        commands,
+        greeting,
+        smiles,
+        new builder.LuisRecognizer(process.env.LUIS_ENDPOINT)
+    ],
+    intentThreshold: 0.2,
+    recognizeOrder: builder.RecognizeOrder.series
+});
 
 bot.dialog('greeting', function(session){
     session.endDialog("Hello. I'm Peggy the PMO bot. I will try to answer your PMO questions.");
@@ -32,11 +43,13 @@ bot.dialog('greeting', function(session){
 //Listen for messages
 server.post('/api/messages', connector.listen());
 
+//Dialogs
 bot.dialog('prevYearHol', function(session){
     session.endDialog("All of your remaining holiday totals accumulate to one total which can be accessed by using the current holiday code");
 
 }).triggerAction({
-    matches: 'prevYearHol'
+    matches: 'prevYearHol',
+    intentThreshold: 0.4
 });
 
 bot.dialog('emptyDashboard', function(session){
@@ -87,6 +100,48 @@ bot.dialog('dayInLieu', function(session){
 }).triggerAction({
     matches: 'dayInLieu'
 });
+
+bot.dialog('missingTimecode', function(session){
+    session.endDialog("Please contact your project manager.");
+}).triggerAction({
+    matches: 'missingTimecode'
+});
+
+bot.dialog('support', require('./support'))
+.triggerAction({
+    matches: [/help/i, /support/i, /problem/i]
+});
+
+bot.dialog('holiday', [function(session){
+    builder.Prompts.choice(session,"I know the following about holidays. Please select an option below to find out more informaion:", "Buy/Sell Holidays|Cancel Holidays|Holiday Timecode|Carrying Over Holidays | Days in Lieu | I need more information", { listStyle: builder.ListStyle.button }); 
+},
+function(session, results){
+    switch(results.response.index){
+        case 0:
+            session.beginDialog('buySellHoliday');
+            break;
+        case 1:
+            session.beginDialog('cancelHoliday');
+            break;
+        case 2:
+            session.beginDialog('holidayCode');
+            break;
+        case 3:
+            session.beginDialog('prevYearHoliday');
+            break;
+        case 4:
+            session.beginDialog('dayInLieu');
+            break;
+        case 5:
+            session.beginDialog('contacts', []);
+            break;
+    }
+}]).triggerAction({
+    matches: [/holiday/i, /holidays/i, /annual leave/i]
+});
+
+
+
 
 
 
