@@ -116,7 +116,7 @@ function(session, results){
             session.beginDialog('/holidayCode');
             break;
         case 3:
-            session.beginDialog('/prevYearHoliday');
+            session.beginDialog('/prevYearHol');
             break;
         case 4:
             session.beginDialog('/dayInLieu');
