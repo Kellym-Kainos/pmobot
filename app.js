@@ -21,11 +21,9 @@ var bot = new builder.UniversalBot(connector);
 const intents = new builder.IntentDialog({
     recognizers: [
         new builder.LuisRecognizer(process.env.LUIS_ENDPOINT)
-        
-       // new builder.LuisRecognizer("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/52441db0-8ba8-44df-9153-f6249d4062fe?subscription-key=5811ebd525b443b8badb31bb4e380aaa&timezoneOffset=0&verbose=true")
-    ],
+            ],
     intentThreshold: 0.4,
-    // recognizeOrder: builder.RecognizeOrder.series
+         recognizeOrder: builder.RecognizeOrder.series
 });
 
 intents.matches('greeting', '/greeting');
@@ -49,7 +47,6 @@ intents.onDefault(function (session) {
 server.post('/api/messages', connector.listen());
 
 //Dialogs
-
 bot.dialog('/', intents);
 
 bot.dialog('/greeting', function(session){
@@ -100,28 +97,32 @@ bot.dialog('/missingTimecode', function(session){
     session.endDialog("Please contact your project manager.");
 });
 
-bot.dialog('holiday', [function(session){
+bot.dialog('/contacts', function(session){
+    session.endDialog('Please contact: the following: \n - Digital Services: digitalservicespmo@kainos.com \n - Smart: Jayne Carson j.carson@kainos.com \n - Everyone else - PMO@Kainos.com');
+});
+
+bot.dialog('/holiday', [function(session){
     builder.Prompts.choice(session,"I know the following about holidays. Please select an option below to find out more informaion:", "Buy/Sell Holidays|Cancel Holidays|Holiday Timecode|Carrying Over Holidays | Days in Lieu | I need more information", { listStyle: builder.ListStyle.button }); 
 },
 function(session, results){
     switch(results.response.index){
         case 0:
-            session.beginDialog('buySellHoliday');
+            session.beginDialog('/buySellHoliday');
             break;
         case 1:
-            session.beginDialog('cancelHoliday');
+            session.beginDialog('/cancelHoliday');
             break;
         case 2:
-            session.beginDialog('holidayCode');
+            session.beginDialog('/holidayCode');
             break;
         case 3:
-            session.beginDialog('prevYearHoliday');
+            session.beginDialog('/prevYearHoliday');
             break;
         case 4:
-            session.beginDialog('dayInLieu');
+            session.beginDialog('/dayInLieu');
             break;
         case 5:
-            session.beginDialog('contacts', []);
+            session.beginDialog('/contacts', []);
             break;
     }
 }]).triggerAction({
