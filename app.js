@@ -1,6 +1,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var http = require('http');
+var botMiddleware = require('./middleware')
 
 require('dotenv').config()
 
@@ -52,6 +53,13 @@ intents.onDefault(function (session) {
 
 //Listen for messages
 server.post('/api/messages', connector.listen());
+
+bot.use({
+   botbuilder: function (session, next){
+       botMiddleware.delayResponseTyping(session);
+    next();
+   }
+});
 
 //Dialogs
 bot.dialog('/', intents);
@@ -127,8 +135,10 @@ bot.dialog('/pmoInfo',function(session){
 
 
 bot.dialog('/holiday', [function(session){
-    builder.Prompts.choice(session,"I know the following about holidays. Please select an option below to find out more informaion:", "Buy/Sell Holidays|Cancel Holidays|Holiday Timecode|Carrying Over Holidays | Days in Lieu | I need more information", { listStyle: builder.ListStyle.button }); 
-},
+    //session.sendTyping();
+    setTimeout(function () {
+        builder.Prompts.choice(session,"I know the following about holidays. Please select an option below to find out more information:", "Buy/Sell Holidays|Cancel Holidays|Holiday Timecode|Carrying Over Holidays | Days in Lieu | I need more information", { listStyle: builder.ListStyle.button });         
+    }, 2000);},
 function(session, results){
     switch(results.response.index){
         case 0:
