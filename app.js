@@ -56,7 +56,7 @@ server.post('/api/messages', connector.listen());
 
 bot.use({
    botbuilder: function (session, next){
-       botMiddleware.delayResponseTyping(session);
+       botMiddleware.delayResponseTyping();
     next();
    }
 });
@@ -133,33 +133,30 @@ bot.dialog('/pmoInfo',function(session){
 });
 
 
-
 bot.dialog('/holiday', [function(session){
-    //session.sendTyping();
-    setTimeout(function () {
-        builder.Prompts.choice(session,"I know the following about holidays. Please select an option below to find out more information:", "Buy/Sell Holidays|Cancel Holidays|Holiday Timecode|Carrying Over Holidays | Days in Lieu | I need more information", { listStyle: builder.ListStyle.button });         
-    }, 2000);},
-function(session, results){
-    switch(results.response.index){
-        case 0:
-            session.beginDialog('/buySellHoliday');
-            break;
-        case 1:
-            session.beginDialog('/cancelHoliday');
-            break;
-        case 2:
-            session.beginDialog('/holidayCode');
-            break;
-        case 3:
-            session.beginDialog('/prevYearHol');
-            break;
-        case 4:
-            session.beginDialog('/dayInLieu');
-            break;
-        case 5:
-            session.beginDialog('/contacts', []);
-            break;
-    }
-}]).triggerAction({
+    builder.Prompts.choice(session,"I know the following about holidays. Please select an option below to find out more information:", "Buy/Sell Holidays|Cancel Holidays|Holiday Timecode|Carrying Over Holidays | Days in Lieu | I need more information", { listStyle: builder.ListStyle.button });         
+    },
+    function(session, results){
+        switch(results.response.index){
+            case 0:
+                session.beginDialog('/buySellHoliday');
+                break;
+            case 1:
+                session.beginDialog('/cancelHoliday');
+                break;
+            case 2:
+                session.beginDialog('/holidayCode');
+                break;
+            case 3:
+                session.beginDialog('/prevYearHol');
+                break;
+            case 4:
+                session.beginDialog('/dayInLieu');
+                break;
+            case 5:
+                session.beginDialog('/contacts', []);
+                break;
+        }
+    }]).triggerAction({
     matches: [/^holiday/i, /^holidays/i, /^annual leave/i]
 });
