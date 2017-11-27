@@ -56,7 +56,7 @@ server.post('/api/messages', connector.listen());
 
 bot.use({
    botbuilder: function (session, next){
-       botMiddleware.delayResponseTyping();
+       botMiddleware.delayResponseTyping(session);
     next();
    }
 });
